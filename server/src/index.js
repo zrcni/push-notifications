@@ -21,26 +21,26 @@ webPush.setVapidDetails(
   privateVapidKey
 )
 
-const subscriptions = new Map()
+const subscriptions = {}
 
 app.get('/subscriptions', (req, res) => {
   res.status(200).json(subscriptions)
 })
 
 app.post('/push', (req, res) => {
-  const { message } = req.body
+  const { message, icon, badge } = req.body
   res.status(201).json({})
-console.log('mESSAGE', message)
+
   const payload = JSON.stringify({
     title: message,
     options: {
       body: "This is from the server whoooaa",
-      icon: undefined,
-      badge: undefined
+      icon,
+      badge,
     }
   })
   
-  subscriptions.forEach(subscription => {
+  Object.values(subscriptions).forEach(subscription => {
     webPush
       .sendNotification(subscription, payload)
       .catch(error => console.error(error))
@@ -49,7 +49,6 @@ console.log('mESSAGE', message)
 
 app.post("/subscribe", (req, res) => {
   const { userId, subscription } = req.body
-  console.log('body:', req.body)
   res.status(201).json({})
 
   const payload = JSON.stringify({
@@ -62,17 +61,16 @@ app.post("/subscribe", (req, res) => {
   })
   
   if (subscription === null) {
-    subscriptions.delete(userId)
+    subscriptions[userId] = undefined
   } else {
-    if (!subscriptions.has(userId)) {
-      subscriptions.set(userId, subscription)
+    if (!(userId in subscriptions)) {
+      subscriptions[userId] = subscription
     }
   }
 })
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000
-app.set("port", port)
 
-const server = app.listen(app.get("port"), () => {
-  console.log(`Express running → PORT ${server.address().port}`)
+const server = app.listen(port, () => {
+  console.log(`Express running on PORT ${port}`)
 })
