@@ -23,8 +23,8 @@ webPush.setVapidDetails(
 
 const subscriptions = new Map()
 
-app.get('subscriptions', (req, res) => {
-  res.status(200).json(JSON.parse(subscriptions))
+app.get('/subscriptions', (req, res) => {
+  res.status(200).json(subscriptions)
 })
 
 app.post('/push', (req, res) => {
