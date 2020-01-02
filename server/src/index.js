@@ -51,15 +51,6 @@ app.post("/subscribe", (req, res) => {
   const { userId, subscription } = req.body
   res.status(201).json({})
 
-  const payload = JSON.stringify({
-    title: subscription !== null ? "subscribbled" : "unsubscribbled",
-    options: {
-      body: "This is from the server whoooaa",
-      icon: undefined,
-      badge: undefined
-    }
-  })
-  
   if (subscription === null) {
     subscriptions[userId] = undefined
   } else {
